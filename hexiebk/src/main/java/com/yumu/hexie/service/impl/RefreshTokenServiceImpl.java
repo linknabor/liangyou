@@ -4,21 +4,9 @@
  */
 package com.yumu.hexie.service.impl;
 
-import javax.inject.Inject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.yumu.hexie.common.util.StringUtil;
-import com.yumu.hexie.integration.wechat.constant.ConstantWeChat;
-import com.yumu.hexie.integration.wechat.entity.AccessToken;
-import com.yumu.hexie.integration.wechat.util.WeixinUtil;
-import com.yumu.hexie.integration.wechat.util.WeixinUtilV2;
 import com.yumu.hexie.service.RefreshTokenService;
-import com.yumu.hexie.service.SharedSysConfigService;
-import com.yumu.hexie.service.common.SystemConfigService;
 
 /**
  * <pre>
@@ -31,61 +19,28 @@ import com.yumu.hexie.service.common.SystemConfigService;
 @Service("refreshTokenService")
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
-    private static final Logger SCHEDULE_LOG = LoggerFactory.getLogger("com.yumu.hexie.schedule");
-    
-    @Inject
-    private SystemConfigService systemConfigService;
-    
-    @Inject
-    private SharedSysConfigService sharedSysConfigService;
-    
-    @Scheduled(cron = "0 0 0/1 * * ?")
-    public void refreshAccessTokenJob() {
-        if(!ConstantWeChat.isMainServer()){
-            return;
-        }
-        SCHEDULE_LOG.error("--------------------refresh token[B]-------------------");
-        AccessToken at = WeixinUtil.getAccessToken();
-        if (at == null) {
-            SCHEDULE_LOG.error("获取token失败----------------------------------------------！！！！！！！！！！！");
-            return;
-        }
-        sharedSysConfigService.saveAccessToken(at);
-        SCHEDULE_LOG.error("--------------------refresh token[E]-------------------");
-    }
 
-    @Scheduled(cron = "0 0 0/1 * * ?")
-    public void refreshJsTicketJob() {
-        if(!ConstantWeChat.isMainServer()){
-            return;
-        }
-        SCHEDULE_LOG.error("--------------------refresh ticket[B]-------------------");
-        String jsToken = WeixinUtil.getRefreshJsTicket(systemConfigService.queryWXAToken());
-        if (StringUtil.isNotEmpty(jsToken)) {
-            sharedSysConfigService.saveJsToken(jsToken);
-        } else {
-            SCHEDULE_LOG.error("获取ticket失败----------------------------------------------！！！！！！！！！！！");
-        }
-        SCHEDULE_LOG.error("--------------------refresh ticket[E]-------------------");
-    }
+	@Override
+	public void refreshOtherAccessTokenJob() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void refreshAccessTokenJob() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void refreshJsTicketJob() {
+		// TODO Auto-generated method stub
+		
+	}
     
-    @Scheduled(cron = "0 0 0/1 * * ?")
-    public void refreshOtherAccessTokenJob() {
-        if(!ConstantWeChat.isMainServer()){
-            return;
-        }
-        SCHEDULE_LOG.error("--------------------refresh Other token[B]-------------------");
-        String[] appIds = systemConfigService.queryAppIds();
-        for(String appId : appIds) {
-            AccessToken at = WeixinUtilV2.getAccessToken(appId, systemConfigService.querySecret(appId));
-            if (at == null) {
-                SCHEDULE_LOG.error("获取Other token失败----------------------------------------------！！！！！！！！！！！");
-                return;
-            }
-            sharedSysConfigService.saveAccessTokenByAppid(appId, at);
-        }
-        SCHEDULE_LOG.error("--------------------refresh Other token[E]-------------------");
-    }
+    
+
+    
 
     	
     
